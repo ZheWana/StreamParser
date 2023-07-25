@@ -100,15 +100,6 @@ static int CompareString(pSParser_t parser, const char* str, const int strLen, c
 
 int SParser_Parse(pSParser_t parser, pMetaData_t dataArray, const char ch)
 {
-    if (CompareString(parser, parser->divStr, parser->divStrLen, ch, 0)) {
-        parser->chPtr[0] = parser->divStr;
-
-        if (*parser->typePtr != ' ')
-            dataArray[parser->typePtr - parser->typeList] = parser->temp;
-        if (*(++parser->typePtr) == '\0')
-            goto EndOfParse;
-    }
-
     switch (parser->mState) {
     case FindHead:
         if (CompareString(parser, parser->headStr, parser->headStrLen, ch, 0)) {
@@ -119,15 +110,31 @@ int SParser_Parse(pSParser_t parser, pMetaData_t dataArray, const char ch)
             break;
         }
     case Parse:
+        if (CompareString(parser, parser->divStr, parser->divStrLen, ch, 0)) {
+            parser->chPtr[0] = parser->divStr;
+
+            if (*parser->typePtr != ' ' && *parser->typePtr != '\0') {
+                dataArray[parser->typePtr - parser->typeList] = parser->temp;
+            }
+
+            if (*(parser->typePtr) == '\0') {
+                goto EndOfParse;
+            } else {
+                parser->typePtr++;
+            }
+        }
 
         switch (*parser->typePtr) {
+            metaData_t temp;
         case ' ':
             break;
         case 'd':
-            parser->temp = Parse_Intenger(parser, ch);
+            if ((temp = Parse_Intenger(parser, ch)).intenger)
+                parser->temp = temp;
             break;
         case 'f':
-            parser->temp = Parse_Float(parser, ch);
+            if ((temp = Parse_Float(parser, ch)).intenger)
+                parser->temp = temp;
             break;
         case 's':
             break;
@@ -137,10 +144,10 @@ int SParser_Parse(pSParser_t parser, pMetaData_t dataArray, const char ch)
         }
 
         if (CompareString(parser, parser->tailStr, parser->TailStrLen, ch, 1)) {
-        EndOfParse:
             if (*parser->typePtr != ' ')
                 dataArray[parser->typePtr - parser->typeList] = parser->temp;
 
+        EndOfParse:
             parser->chPtr[0] = parser->headStr;
             parser->typePtr = parser->typeList;
             parser->mState = FindHead;
