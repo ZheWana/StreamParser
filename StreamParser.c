@@ -1,12 +1,16 @@
 /**
- * @file StreamParser.h
- * @author ZheWana(zhewana@qq.com)
- *
- * @date 2023-7-24
+ * @file StreamParser.c
+ * @author ZheWana (zhewana@qq.com)
+ * @brief A parser that can help to parse specific information from byte stream.
+ * @date 2023-07-24
+ * 
+ * @copyright Copyright (c) 2023
+ * 
  */
 
 #include "StreamParser.h"
 #include "string.h"
+#include "stdlib.h"
 
 #define IS_NUMBER(ch) (ch >= '0' && ch <= '9')
 

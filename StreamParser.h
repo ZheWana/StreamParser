@@ -1,8 +1,11 @@
 /**
  * @file StreamParser.h
- * @author ZheWana(zhewana@qq.com)
- *
- * @date 2023-7-24
+ * @author ZheWana (zhewana@qq.com)
+ * @brief A parser that can help to parse specific information from byte stream.
+ * @date 2023-07-24
+ * 
+ * @copyright Copyright (c) 2023
+ * 
  */
 #ifndef __STREAM_HANDLER__
 #define __STREAM_HANDLER__
