@@ -18,7 +18,7 @@
 #define USE_DOUBLE (1)
 /**
  * @brief Config whether to use string parse function.
- * @note String parse will cause addtional memory use through "malloc" in stdlib.
+ * @note String parse may cause addtional memory use through "malloc" in stdlib.
  * @warning !!! Remember to free string memory after using it !!!
  */
 #define USE_STRING_PARSE (1)

@@ -3,14 +3,17 @@
  * @author ZheWana (zhewana@qq.com)
  * @brief A parser that can help to parse specific information from byte stream.
  * @date 2023-07-24
- * 
+ *
  * @copyright Copyright (c) 2023
- * 
+ *
  */
 
 #include "StreamParser.h"
 #include "string.h"
+
+#if USE_STRING_PARSE
 #include "stdlib.h"
+#endif
 
 #define IS_NUMBER(ch) (ch >= '0' && ch <= '9')
 
@@ -82,16 +85,16 @@ static metaData_t Parse_Float(pSParser_t parser, const char ch)
  */
 static int CompareString(pSParser_t parser, const char* str, const int strLen, const char ch, const int pSelect)
 {
-    if (parser->chPtr[pSelect] == NULL || *parser->chPtr[pSelect] == '\0') {
+    if (parser->chPtr[pSelect] == NULL) {
         return 1;
     } else if (ch == *parser->chPtr[pSelect]) {
     EqualHook:
         if (strLen == 1) {
-            if (pSelect)
-                return 1;
-            parser->chPtr[pSelect] = NULL;
+            return 1;
         } else {
             parser->chPtr[pSelect] = parser->chPtr[pSelect] + 1;
+            if (*parser->chPtr[pSelect] == '\0')
+                return 1;
         }
     } else {
         parser->chPtr[pSelect] = (char*)str;
@@ -110,24 +113,9 @@ int SParser_Parse(pSParser_t parser, pMetaData_t dataArray, const char ch)
             parser->chPtr[0] = parser->divStr;
             parser->chPtr[1] = parser->tailStr;
             parser->mState = Parse;
-        } else {
-            break;
         }
+        break;
     case Parse:
-        if (CompareString(parser, parser->divStr, parser->divStrLen, ch, 0)) {
-            parser->chPtr[0] = parser->divStr;
-
-            if (*parser->typePtr != ' ' && *parser->typePtr != '\0') {
-                dataArray[parser->typePtr - parser->typeList] = parser->temp;
-            }
-
-            if (*(parser->typePtr) == '\0') {
-                goto EndOfParse;
-            } else {
-                parser->typePtr++;
-            }
-        }
-
         switch (*parser->typePtr) {
             metaData_t temp;
         case ' ':
@@ -145,6 +133,20 @@ int SParser_Parse(pSParser_t parser, pMetaData_t dataArray, const char ch)
 
         default:
             break;
+        }
+        
+        if (CompareString(parser, parser->divStr, parser->divStrLen, ch, 0)) {
+            parser->chPtr[0] = parser->divStr;
+
+            if (*parser->typePtr != ' ' && *parser->typePtr != '\0') {
+                dataArray[parser->typePtr - parser->typeList] = parser->temp;
+            }
+
+            if (*(parser->typePtr) == '\0') {
+                goto EndOfParse;
+            } else {
+                parser->typePtr++;
+            }
         }
 
         if (CompareString(parser, parser->tailStr, parser->TailStrLen, ch, 1)) {
