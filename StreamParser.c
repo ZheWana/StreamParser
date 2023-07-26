@@ -17,6 +17,8 @@
 
 #define IS_NUMBER(ch) (ch >= '0' && ch <= '9')
 
+static char* errorMsg = "Error: malloc Failed";
+
 void SParser_Init(pSParser_t parser, char* headStr, char* tailStr, char* divStr, char* typeList)
 {
     parser->headStr = headStr;
@@ -70,13 +72,47 @@ static metaData_t Parse_Float(pSParser_t parser, const char ch)
             temp.flt /= 10;
         }
         temp.flt = (floatTypdef)parser->buff[1] + (parser->buff[1] >= 0 ? temp.flt : -temp.flt);
-        memset(parser->buff, 0, 4 * sizeof(int));
+        memset(parser->buff, 0, 4 * sizeof(size_t));
 
         return temp;
     }
 
     return (metaData_t)0;
 }
+
+#if USE_STRING_PARSE
+static char* Parse_String(pSParser_t parser, char* strBuff, const char ch)
+{
+    if (parser->buff[3] == 0) {
+        if (strBuff == NULL) {
+            strBuff = malloc(STRING_BUFFER_SIZE * sizeof(char));
+
+            if (NULL == strBuff) {
+                return errorMsg;
+            }
+        }
+
+        parser->buff[3] = 1;
+        parser->buff[0] = parser->buff[1] = (size_t)strBuff;
+    }
+
+    if (ch == *parser->tailStr || ch == *parser->divStr) {
+        char* temp = parser->buff[1];
+        
+        *(char*)parser->buff[0] = '\0';
+        parser->buff[0] = parser->buff[3] = parser->buff[1] = 0;
+        return temp;
+    }
+
+    if (parser->buff[0] == 0)
+        return NULL;
+
+    *(char*)parser->buff[0] = ch;
+    parser->buff[0] += sizeof(char);
+
+    return NULL;
+}
+#endif
 
 /**
  * @return return value as follow:
@@ -119,6 +155,7 @@ int SParser_Parse(pSParser_t parser, pMetaData_t dataArray, const char ch)
         switch (*parser->typePtr) {
             metaData_t temp;
         case ' ':
+        case '\0':
             break;
         case 'd':
             if ((temp = Parse_Intenger(parser, ch)).intenger)
@@ -128,13 +165,18 @@ int SParser_Parse(pSParser_t parser, pMetaData_t dataArray, const char ch)
             if ((temp = Parse_Float(parser, ch)).intenger)
                 parser->temp = temp;
             break;
+
+#if USE_STRING_PARSE
         case 's':
+            parser->temp.strPtr = Parse_String(parser, dataArray[parser->typePtr - parser->typeList].strPtr, ch);
             break;
+#endif
 
         default:
+            return -1;
             break;
         }
-        
+
         if (CompareString(parser, parser->divStr, parser->divStrLen, ch, 0)) {
             parser->chPtr[0] = parser->divStr;
 

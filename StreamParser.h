@@ -22,6 +22,11 @@
  * @warning !!! Remember to free string memory after using it !!!
  */
 #define USE_STRING_PARSE (1)
+/**
+ * @brief Just the size of the buffer that you give us.
+ * 
+ */
+#define STRING_BUFFER_SIZE (64)
 
 #if USE_DOUBLE
 typedef double floatTypdef;
@@ -60,7 +65,7 @@ typedef struct StreamParser {
      * @brief parser buffer refer as:
      * | sign | intenger | decimal | flags |
      */
-    int buff[4];
+    size_t buff[4];
     metaData_t temp;
 
     enum {
