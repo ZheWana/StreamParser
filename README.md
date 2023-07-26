@@ -1,2 +1,13 @@
 # StreamParser
-A parser that can help you to parse specific information from byte stream.
+
+## 背景
+
+数据解析一般有两种方式：**块式解析**与**流式解析**。
+
+## 如何安装
+
+该模块仅仅包含一个C头文件以及一个C源文件，仅需把这两个文件添加到你的工程中即可。
+
+## 使用说明
+
+## 示例
