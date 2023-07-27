@@ -1,7 +1,8 @@
 #include "../StreamParser.h"
 #include "stdio.h"
+#include "string.h"
 
-const char* const testStr = "$GPGGA,092204.999,4250.5589,S,14718.5084,E,1,04,24.4,19.7,M,,,,0000*1F";
+char testStr[] = "$GPGGA,092204.999,4250.5589,S,14718.5084,E,1,04,24.4,19.7,M,,,,0000*1F";
 char* chptr = testStr;
 char buffList[4][STRING_BUFFER_SIZE];
 metaData_t databuff[20] = {

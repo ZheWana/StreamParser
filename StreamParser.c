@@ -97,8 +97,8 @@ static char* Parse_String(pSParser_t parser, char* strBuff, const char ch)
     }
 
     if (ch == *parser->tailStr || ch == *parser->divStr) {
-        char* temp = parser->buff[1];
-        
+        char* temp = (char*)parser->buff[1];
+
         *(char*)parser->buff[0] = '\0';
         parser->buff[0] = parser->buff[3] = parser->buff[1] = 0;
         return temp;
