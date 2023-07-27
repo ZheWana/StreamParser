@@ -104,7 +104,7 @@ static char* Parse_String(pSParser_t parser, char* strBuff, const char ch)
         return temp;
     }
 
-    if (parser->buff[0] == 0)
+    if (parser->buff[0] == 0 || ((char*)parser->buff[0] - (char*)parser->buff[1]) >= STRING_BUFFER_SIZE)
         return NULL;
 
     *(char*)parser->buff[0] = ch;

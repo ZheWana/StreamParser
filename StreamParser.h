@@ -92,11 +92,11 @@ typedef struct StreamParser {
  * as the parameter string.But no matter how much the character is,
  * it SHOULD be a "string".
  * 
- * @note For "typeList" you can use as follow: 
- * * " " to ignore;
- * * "s" for string;
- * * "f" for float;
- * * "d" for intenger.
+ * @note For "typeList" you can use as follow: \n
+ * * " " to ignore; \n
+ * * "s" for string; \n
+ * * "f" for float; \n
+ * * "d" for intenger. \n
  * 
  * @example Considering you want to parse data from the following GPS NMEA protocol:
  *     $GPGGA,092204.999,4250.5589,S,14718.5084,E,1,04,24.4,19.7,M,,,,0000*1F
@@ -114,8 +114,18 @@ void SParser_Init(pSParser_t parser, char* headStr, char* tailStr, char* divStr,
  * @param dataArray A meatData array which used as a return value list for parsed data
  * @param ch Each character in the byte stream
  * @return int Return whether the parse is finished refer as follow: 
- * 0: unfinished;
- * 1: finished.
+ * * 0: unfinished;
+ * * 1: finished.
+ * 
+ * @note For parameter "dataArray":
+ * If you set the macro USE_STRING_PARSE as 1 which means you are using the string 
+ * parse function, you should ensure that the element in dataArray which corresponding
+ * the "s" in typeList is in your control.You should set it as follow: \n
+ * * NULL           : if you do not provide a buffer for string to restore; \n
+ * * BUFFER ADDRESS : if you can privide a buffer for string to restore. \n
+ * By the way, your buffer should preferably be greater than or equal to the macro: \n
+ *      STRING_BUFFER_SIZE \n
+ * which is the buffer size we will creat for your string if you give us NULL. 
  */
 int SParser_Parse(pSParser_t parser, pMetaData_t dataArray, const char ch);
 
