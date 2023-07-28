@@ -17,7 +17,11 @@
 
 #define IS_NUMBER(ch) (ch >= '0' && ch <= '9')
 
-static char* errorMsg = "Error: malloc Failed";
+static char* errorMsg[] = {
+    "Error: malloc Failed.",
+    "Error: String parser disabled.",
+    "Error: Type list error."
+};
 
 void SParser_Init(pSParser_t parser, char* headStr, char* tailStr, char* divStr, char* typeList)
 {
@@ -88,7 +92,7 @@ static char* Parse_String(pSParser_t parser, char* strBuff, const char ch)
             strBuff = malloc(STRING_BUFFER_SIZE * sizeof(char));
 
             if (NULL == strBuff) {
-                return errorMsg;
+                return errorMsg[0];
             }
         }
 
@@ -166,14 +170,16 @@ int SParser_Parse(pSParser_t parser, pMetaData_t dataArray, const char ch)
                 parser->temp = temp;
             break;
 
-#if USE_STRING_PARSE
         case 's':
+#if USE_STRING_PARSE
             parser->temp.strPtr = Parse_String(parser, dataArray[parser->typePtr - parser->typeList].strPtr, ch);
-            break;
+#else
+            parser->temp.strPtr = errorMsg[1];
 #endif
+            break;
 
         default:
-            return -1;
+            parser->temp.strPtr = errorMsg[2];
             break;
         }
 
