@@ -4,6 +4,8 @@
 
 char testStr[] = "$GPGGA,092204.999,4250.5589,S,14718.5084,E,1,04,24.4,19.7,M,,,,0000*1F";
 char* chptr = testStr;
+
+sParser_t parser;
 char buffList[4][STRING_BUFFER_SIZE];
 metaData_t databuff[20] = {
     [0] = buffList[0],
@@ -11,39 +13,43 @@ metaData_t databuff[20] = {
     [5] = buffList[2],
     [10] = buffList[3]
 };
+char* fmtStr = "ssssfs,dffs";
 
-int main(void)
+void XXX_UART_ReceiveCompltCallBack(const char ch)
 {
-    sParser_t parser;
-    char* strList[] = {
-        "ssssfs,dffs",
+    static char* strList[] = {
         "Parsed intenger [%d]: %d\r\n",
         "Parsed float    [%d]: %f\r\n",
         "Parsed string   [%d]: %s\r\n",
         "Parse ignored   [%d]\r\n",
     };
-
-    SParser_Init(&parser, "$GP", "*1F", ",", strList[0]);
-    while (*chptr != '\0') {
-        if (SParser_Parse(&parser, databuff, *chptr++)) {
-            for (int i = 0; i < strlen(strList[0]); i++) {
-                switch (strList[0][i]) {
-                case 'f':
-                    printf(strList[2], i, databuff[i]);
-                    break;
-                case 'd':
-                    printf(strList[1], i, databuff[i]);
-                    break;
-                case ' ':
-                    printf(strList[4], i);
-                    break;
-                case 's':
-                default:
-                    printf(strList[3], i, databuff[i].strPtr == NULL ? "NULL" : databuff[i].strPtr);
-                    break;
-                }
+    if (SParser_Parse(&parser, databuff, ch)) {
+        for (int i = 0; i < strlen(fmtStr); i++) {
+            switch (fmtStr[i]) {
+            case 'f':
+                printf(strList[1], i, databuff[i]);
+                break;
+            case 'd':
+                printf(strList[0], i, databuff[i]);
+                break;
+            case ' ':
+                printf(strList[3], i);
+                break;
+            case 's':
+            default:
+                printf(strList[2], i, databuff[i].strPtr == NULL ? "NULL" : databuff[i].strPtr);
+                break;
             }
         }
+    }
+}
+
+int main(void)
+{
+    SParser_Init(&parser, "$GP", "*1F", ",", fmtStr);
+    while (*chptr != '\0') {
+        // We just want to make it more like an interrupt in MCU.
+        XXX_UART_ReceiveCompltCallBack(*chptr++);
     }
     return 0;
 }
