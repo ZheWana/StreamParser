@@ -16,7 +16,7 @@ int main(void)
 {
     sParser_t parser;
     char* strList[] = {
-        "ssssfsddffs",
+        "ssssfs,dffs",
         "Parsed intenger [%d]: %d\r\n",
         "Parsed float    [%d]: %f\r\n",
         "Parsed string   [%d]: %s\r\n",
@@ -28,9 +28,6 @@ int main(void)
         if (SParser_Parse(&parser, databuff, *chptr++)) {
             for (int i = 0; i < strlen(strList[0]); i++) {
                 switch (strList[0][i]) {
-                case 's':
-                    printf(strList[3], i, databuff[i].strPtr == NULL ? "NULL" : databuff[i].strPtr);
-                    break;
                 case 'f':
                     printf(strList[2], i, databuff[i]);
                     break;
@@ -39,6 +36,10 @@ int main(void)
                     break;
                 case ' ':
                     printf(strList[4], i);
+                    break;
+                case 's':
+                default:
+                    printf(strList[3], i, databuff[i].strPtr == NULL ? "NULL" : databuff[i].strPtr);
                     break;
                 }
             }
