@@ -27,10 +27,10 @@ void XXX_UART_ReceiveCompltCallBack(const char ch)
         for (int i = 0; i < strlen(fmtStr); i++) {
             switch (fmtStr[i]) {
             case 'f':
-                printf(strList[1], i, databuff[i]);
+                printf(strList[1], i, databuff[i].flt);
                 break;
             case 'd':
-                printf(strList[0], i, databuff[i]);
+                printf(strList[0], i, databuff[i].intenger);
                 break;
             case ' ':
                 printf(strList[3], i);
