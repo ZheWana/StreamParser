@@ -72,7 +72,7 @@ static metaData_t Parse_Float(pSParser_t parser, const char ch)
     if (ch == *parser->tailStr || ch == *parser->divStr) {
         temp.flt = parser->buff[2];
 
-        while (temp.flt > 1) {
+        while (temp.flt >= 1) {
             temp.flt /= 10;
         }
         temp.flt = (floatTypdef)parser->buff[1] + (parser->buff[1] >= 0 ? temp.flt : -temp.flt);
@@ -166,7 +166,7 @@ int SParser_Parse(pSParser_t parser, pMetaData_t dataArray, const char ch)
                 parser->temp = temp;
             break;
         case 'f':
-            if ((temp = Parse_Float(parser, ch)).intenger)
+            if ((temp = Parse_Float(parser, ch)).flt)
                 parser->temp = temp;
             break;
 
